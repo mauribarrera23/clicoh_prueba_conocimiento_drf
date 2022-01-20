@@ -1,7 +1,6 @@
 from django.core.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, filters, status
-from rest_framework.response import Response
+from rest_framework import viewsets, filters
 
 from ecommerce.models import Product, OrderDetail, Order
 from ecommerce.serializers import ProductSerializer, OrderDetailSerializer, OrderSerializer
