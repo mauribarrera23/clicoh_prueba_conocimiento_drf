@@ -45,3 +45,10 @@ class OrderDetailViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all().prefetch_related('order_detail', 'order_detail__product')
     serializer_class = OrderSerializer
+
+    def perform_destroy(self, instance):
+        for detail in instance.order_detail.all():
+            product = detail.product
+            product.stock = product.stock + detail.quantity
+            product.save()
+        return instance.delete()
