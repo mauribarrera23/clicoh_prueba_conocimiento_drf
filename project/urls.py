@@ -4,6 +4,8 @@ from django.conf import settings
 from django.views.generic import RedirectView
 from django.conf.urls.static import static
 
+from project.router import router
+
 admin.site.site_header = getattr(settings, 'PROJECT_NAME_HEADER')
 admin.site.site_title = getattr(settings, 'PROJECT_NAME_TITLE')
 
@@ -15,6 +17,7 @@ urlpatterns = [
         )
     ),
     path('admin/', admin.site.urls),
+    path('api/', include(router.urls))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.ACTIVAR_HERRAMIENTAS_DEBUGGING:
