@@ -24,3 +24,16 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         if data['quantity'] > data['product'].stock or data['quantity'] <= 0:
             raise serializers.ValidationError(f"Producto sin stock. Stock disponible: {data['product'].stock} unidades.")
         return data
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ('date_time', 'order_detail')
+        extra_kwargs = {
+            'order_detail': {'required': False},
+        }
+
+    included_serializers = {
+        'order_detail': OrderDetailSerializer,
+    }
