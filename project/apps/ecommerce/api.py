@@ -3,8 +3,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters, status
 from rest_framework.response import Response
 
-from ecommerce.models import Product, OrderDetail
-from ecommerce.serializers import ProductSerializer, OrderDetailSerializer
+from ecommerce.models import Product, OrderDetail, Order
+from ecommerce.serializers import ProductSerializer, OrderDetailSerializer, OrderSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -40,3 +40,8 @@ class OrderDetailViewSet(viewsets.ModelViewSet):
             product.stock = product.stock + (instance.quantity - serializer.validated_data['quantity'])
             product.save()
         return serializer.save()
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all().prefetch_related('order_detail', 'order_detail__product')
+    serializer_class = OrderSerializer
