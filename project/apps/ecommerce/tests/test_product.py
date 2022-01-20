@@ -2,10 +2,13 @@ import pytest
 
 from ecommerce.tests.utils import get, post, patch, delete
 from ecommerce.tests.fixture_product import create_products
+from ecommerce.tests.fixture_user import create_user
 
 
 @pytest.mark.django_db
 def test_create_product():
+    user = create_user(username='superuser')
+
     data = {
         'data': {
             'type': 'Product',
@@ -19,7 +22,7 @@ def test_create_product():
 
     endpoint = '/api/product/'
 
-    response = post(endpoint, data=data)
+    response = post(endpoint, data=data, user_logged=user)
 
     assert response.status_code == 201
 
@@ -32,6 +35,8 @@ def test_create_product():
 
 @pytest.mark.django_db
 def test_update_product(create_products):
+    user = create_user(username='superuser')
+
     product_laptop_lenovo, product_laptop_acer, product_laptop_hp, product_laptop_toshiba, \
     product_laptop_macbook = create_products
 
@@ -47,7 +52,7 @@ def test_update_product(create_products):
 
     endpoint = f'/api/product/{product_laptop_macbook.id}/'
 
-    response = patch(endpoint, data=data)
+    response = patch(endpoint, data=data, user_logged=user)
 
     assert response.status_code == 200
 
@@ -60,24 +65,28 @@ def test_update_product(create_products):
 
 @pytest.mark.django_db
 def test_delete_product(create_products):
+    user = create_user(username='superuser')
+
     product_laptop_lenovo, product_laptop_acer, product_laptop_hp, product_laptop_toshiba, \
     product_laptop_macbook = create_products
 
     endpoint = f'/api/product/{product_laptop_macbook.id}/'
 
-    response = delete(endpoint,)
+    response = delete(endpoint, user_logged=user)
 
     assert response.status_code == 204
 
 
 @pytest.mark.django_db
 def test_product_detail(create_products):
+    user = create_user(username='superuser')
+
     product_laptop_lenovo, product_laptop_acer, product_laptop_hp, product_laptop_toshiba, \
     product_laptop_macbook = create_products
 
     endpoint = f'/api/product/{product_laptop_macbook.id}/'
 
-    response = get(endpoint,)
+    response = get(endpoint, user_logged=user)
 
     assert response.status_code == 200
 
@@ -90,9 +99,11 @@ def test_product_detail(create_products):
 
 @pytest.mark.django_db
 def test_products_list(create_products):
+    user = create_user(username='superuser')
+
     endpoint = '/api/product/'
 
-    response = get(endpoint)
+    response = get(endpoint, user_logged=user)
     assert response.status_code == 200
 
     data = response.json()['data']
