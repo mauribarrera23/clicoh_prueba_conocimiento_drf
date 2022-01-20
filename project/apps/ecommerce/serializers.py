@@ -22,14 +22,17 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         if data['quantity'] <= 0:
             raise serializers.ValidationError("Debe seleccionar al menos un producto.")
         if data['quantity'] > data['product'].stock or data['quantity'] <= 0:
-            raise serializers.ValidationError(f"Producto sin stock. Stock disponible: {data['product'].stock} unidades.")
+            raise serializers.ValidationError(
+                f"Producto sin stock. Stock disponible: {data['product'].stock} unidades.")
         return data
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    total = serializers.SerializerMethodField(method_name='get_total')
+
     class Meta:
         model = Order
-        fields = ('date_time', 'order_detail')
+        fields = ('date_time', 'order_detail', 'total')
         extra_kwargs = {
             'order_detail': {'required': False},
         }
@@ -37,3 +40,9 @@ class OrderSerializer(serializers.ModelSerializer):
     included_serializers = {
         'order_detail': OrderDetailSerializer,
     }
+
+    def get_total(self, order):
+        total = 0
+        for detail in order.order_detail.all():
+            total = total + detail.product.price * detail.quantity
+        return total
