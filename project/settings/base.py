@@ -89,7 +89,6 @@ MEDIA_URL = env.str('DJANGO_MEDIA_URL', default='/media/')
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
@@ -155,3 +154,5 @@ if ACTIVAR_HERRAMIENTAS_DEBUGGING:
     MIDDLEWARE = ('debug_toolbar.middleware.DebugToolbarMiddleware',) + MIDDLEWARE
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] += ('rest_framework.renderers.BrowsableAPIRenderer',)
     REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] += ('rest_framework.authentication.SessionAuthentication',)
+
+API_DOLAR_URL = env.str('API_DOLAR_URL')
