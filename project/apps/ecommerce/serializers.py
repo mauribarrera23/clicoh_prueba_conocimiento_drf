@@ -1,6 +1,6 @@
-from rest_framework.validators import UniqueValidator
 from rest_framework import serializers
 from ecommerce.models import Product, OrderDetail, Order
+from ecommerce.utils import get_dolar_blue
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -29,10 +29,11 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField(method_name='get_total')
+    total_usd = serializers.SerializerMethodField(method_name='get_total_usd')
 
     class Meta:
         model = Order
-        fields = ('date_time', 'order_detail', 'total')
+        fields = ('date_time', 'order_detail', 'total', 'total_usd')
         extra_kwargs = {
             'order_detail': {'required': False},
         }
@@ -46,3 +47,7 @@ class OrderSerializer(serializers.ModelSerializer):
         for detail in order.order_detail.all():
             total = total + detail.product.price * detail.quantity
         return total
+
+    def get_total_usd(self,order):
+        total_usd = get_dolar_blue(self.get_total(order))
+        return round(total_usd, 2)
