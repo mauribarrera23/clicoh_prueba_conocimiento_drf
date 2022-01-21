@@ -2,6 +2,8 @@ import datetime
 
 from django.db import models
 
+from ecommerce.querysets import OrderDetailQueryset
+
 
 class Product(models.Model):
     class Meta:
@@ -27,6 +29,11 @@ class Order(models.Model):
         return str(self.date_time)
 
 
+class OrderDetailQueryset(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().select_related('product', 'order')
+
+
 class OrderDetail(models.Model):
     class Meta:
         verbose_name = "Order detail"
@@ -35,6 +42,8 @@ class OrderDetail(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_detail")
     quantity = models.IntegerField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    objects = OrderDetailQueryset()
 
     def __str__(self):
         return f'{self.order}'
