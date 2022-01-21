@@ -3,7 +3,7 @@ import pytest
 from ecommerce.models import Order
 
 
-@pytest.mark.django_db
+@pytest.fixture()
 def create_orders():
     order_alpha, _ = Order.objects.get_or_create(
         date_time='2022-01-18 18:00'
