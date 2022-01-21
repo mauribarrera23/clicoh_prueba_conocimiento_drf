@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework_json_api import serializers
 from ecommerce.models import Product, OrderDetail, Order
 from ecommerce.utils import get_dolar_blue
 
@@ -21,9 +21,6 @@ class OrderDetailSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if data['quantity'] <= 0:
             raise serializers.ValidationError("Debe seleccionar al menos un producto.")
-        if data['quantity'] > data['product'].stock or data['quantity'] <= 0:
-            raise serializers.ValidationError(
-                f"Producto sin stock. Stock disponible: {data['product'].stock} unidades.")
         return data
 
 

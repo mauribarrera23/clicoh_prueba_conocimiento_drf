@@ -1,4 +1,4 @@
-from django.core.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 
@@ -21,10 +21,13 @@ class OrderDetailViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         product = serializer.validated_data['product']
+        quantity = serializer.validated_data['quantity']
         order_detail = OrderDetail.objects.filter(order=serializer.validated_data['order'],
                                                   product=serializer.validated_data['product'].id)
         if order_detail.exists():
             raise ValidationError("El producto ya se encuentra seleccionado en la orden.")
+        if quantity > product.stock or quantity <= 0:
+            raise ValidationError(f"Producto sin stock. Stock disponible: {product.stock} unidades.")
         product.stock = product.stock - serializer.validated_data['quantity']
         product.save()
         return serializer.save()
@@ -32,6 +35,8 @@ class OrderDetailViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         instance = serializer.instance
         product = instance.product
+        if serializer.validated_data['quantity'] > product.stock or serializer.validated_data['quantity'] <= 0:
+            raise ValidationError(f"Producto sin stock. Stock disponible: {product.stock} unidades.")
         if instance.quantity < serializer.validated_data['quantity']:
             product.stock = product.stock - (serializer.validated_data['quantity'] - instance.quantity)
             product.save()
