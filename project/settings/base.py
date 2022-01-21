@@ -1,6 +1,9 @@
 import sys
 
 import environ
+
+import django_heroku
+
 from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = environ.Path(__file__) - 3
@@ -156,3 +159,5 @@ if ACTIVAR_HERRAMIENTAS_DEBUGGING:
     REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] += ('rest_framework.authentication.SessionAuthentication',)
 
 API_DOLAR_URL = env.str('API_DOLAR_URL')
+
+django_heroku.settings(locals())
