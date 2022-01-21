@@ -1,6 +1,7 @@
 from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
+from rest_framework.permissions import IsAuthenticated
 
 from ecommerce.models import Product, OrderDetail, Order
 from ecommerce.serializers import ProductSerializer, OrderDetailSerializer, OrderSerializer
@@ -11,6 +12,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter,)
     filterset_fields = ['name']
+    permission_classes = (IsAuthenticated,)
 
 
 class OrderDetailViewSet(viewsets.ModelViewSet):
@@ -18,6 +20,7 @@ class OrderDetailViewSet(viewsets.ModelViewSet):
     serializer_class = OrderDetailSerializer
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filterset_fields = ['product__name']
+    permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
         product = serializer.validated_data['product']
@@ -55,6 +58,7 @@ class OrderDetailViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all().prefetch_related('order_detail', 'order_detail__product')
     serializer_class = OrderSerializer
+    permission_classes = (IsAuthenticated,)
 
     def perform_destroy(self, instance):
         for detail in instance.order_detail.all():
